@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Panic - Diary</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #f5f5dc;
+            padding: 20px;
+            text-align: center;
+        }
+        .diary {
+            width: 60%;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.2);
+            text-align: left;
+        }
+        .page {
+            display: none;
+            font-size: 18px;
+            padding: 10px;
+        }
+        .page.active {
+            display: block;
+        }
+        .buttons {
+            margin-top: 10px;
+        }
+        .input-section {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            background: #5c4b51;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 5px;
+            border-radius: 5px;
+        }
+        input {
+            padding: 8px;
+            font-size: 16px;
+            width: 200px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Diary of Eliot Valentine</h1>
+    <div class="diary">
+        <div class="page active" id="page1">
+            <p>Day 1: Today was a normal day, but something amazing is happening soon...</p>
+            <p>(Hint: A special moment in 2010?)</p>
+        </div>
+        <div class="page" id="page2">
+            <p>Day 2: I watched my favorite movie again. It's about dreams within dreams...</p>
+        </div>
+        <div class="page" id="page3">
+            <p>Day 3: Lila and I love mind-bending movies. Christopher Nolan is a genius!</p>
+        </div>
+        <div class="page" id="page4">
+            <p>Day 4: If I had to pick a secret, it would be the name of my favorite movie + the year.</p>
+        </div>
+    </div>
+
+    <div class="buttons">
+        <button onclick="prevPage()">Previous</button>
+        <button onclick="nextPage()">Next</button>
+    </div>
+
+    <div class="input-section">
+        <p>Enter the password to unlock:</p>
+        <input type="text" id="passwordInput" placeholder="Enter password">
+        <button onclick="checkPassword()">Submit</button>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        const totalPages = 4;
+
+        function showPage(page) {
+            document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+            document.getElementById(`page${page}`).classList.add("active");
+        }
+
+        function nextPage() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                showPage(currentPage);
+            }
+        }
+
+        function prevPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                showPage(currentPage);
+            }
+        }
+
+        async function checkPassword() {
+            const password = document.getElementById("passwordInput").value;
+            
+            const response = await fetch("http://localhost:5000/check_password", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ password: password })
+            });
+
+            const data = await response.json();
+            document.getElementById("result").innerText = data.message;
+        }
+    </script>
+
+</body>
+</html>
